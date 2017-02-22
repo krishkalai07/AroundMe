@@ -297,9 +297,9 @@
         if (code == 200 && [body.JSONArray count] > 0) {
             lastKnownLocationData = body;
             
-            for (NSDictionary *data in lastKnownLocationData.JSONArray) {
+            //for (NSDictionary *data in lastKnownLocationData.JSONArray) {
                //NSLog (@"data=%@",data);
-            }
+            //}
         }
         else {
             lastKnownLocationData = nil;
