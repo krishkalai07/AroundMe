@@ -109,10 +109,12 @@
         NSString *temp_message = [[NSString alloc] init];
         for (NSDictionary *item in lastKnownLocationData.JSONArray) {
             temp_message = [temp_message stringByAppendingString:[item objectForKey:@"Information"]];
+            temp_message = [temp_message stringByAppendingString:@"<br>"];
         }
         message = temp_message;
     }
     
+    //NSString *html = [NSString stringWithFormat:@"<font size=\"18\"><center><bold>%@ <br> %f %f</bold></center></font>", message, latitude, longitude];
     NSString *html = [NSString stringWithFormat:@"<font size=\"18\"><center><bold>%@</bold></center></font>", message];
     [webView loadHTMLString:html baseURL:nil];
 }
@@ -268,7 +270,7 @@
         //[self showInformation];
         latitude = location.coordinate.latitude;
         longitude = location.coordinate.longitude;
-        [self showCoordinates];
+        //[self showCoordinates];
         if ([self hasLocationChanged]) {
             [self checkLocationChange];
         }
