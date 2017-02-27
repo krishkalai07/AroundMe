@@ -11,7 +11,7 @@
 #import "UNIRest/UNIRest.h"
 
 @interface ViewController ()
-    //@property (strong, nonatomic) WKWebView *webView;
+
 @end
 
 @implementation ViewController {
@@ -22,10 +22,13 @@
     NSString *structuresEtag;
     UNIJsonNode *structuresData;
     UNIJsonNode *lastKnownLocationData;
-    double latitude, longitude;
+    double latitude, longitude, elevation;
     double prev_lat, prev_long;
 }
 
+/**
+ * Creates the view with the map panel and information panel
+ */
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -65,6 +68,9 @@
     // Dispose of any resources that can be recreated.
 }
 
+/**
+ * Creates the map view with Google Maps taking 2/3 of the screen.
+ */
 - (void)showMapView {
     CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
@@ -93,6 +99,9 @@
     });
 }
 
+/**
+ * Creates the information panel taking the bottom 1/3 of the screen
+ */
 - (void)createInformationView {
     CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
@@ -103,6 +112,9 @@
     [self.view addSubview:webView];
 }
 
+/**
+ * Displays a message of the nodes the user is in. The message is displayed in the webView.
+ */
 - (void)showInformation {
     NSString *message = @"Not inside any known structures.";
     if ([lastKnownLocationData.JSONArray count] > 0) {
@@ -119,13 +131,17 @@
     [webView loadHTMLString:html baseURL:nil];
 }
 
+/**
+ * Debug function to show the latitude, longitude and elevation of the user.
+ */
 - (void)showCoordinates {
-    NSString *html = [NSString stringWithFormat:@"<font size=\"18\"><center><bold>%.15f, %.15f</bold></center></font>", latitude, longitude];
+    NSString *html = [NSString stringWithFormat:@"<font size=\"18\"><center><bold>%.15f, %.15f <br> %.15f</bold></center></font>", latitude, longitude, elevation];
     [webView loadHTMLString:html baseURL:nil];
 }
 
-
-//Check if the user is inside any of the structures
+/**
+ * Check if the user is inside any of the structures
+ */
 - (NSString *)checkInsideStructures {
    //NSLog(@"Inside checkInsideStructres");
     for (NSDictionary *data in structuresData.JSONArray) {
@@ -141,6 +157,9 @@
     return @"";
 }
 
+/**
+ * Determines if the point is inside the polygon.
+ */
 - (BOOL)isInsidePolygon:(NSString *)polygon {
    //NSLog(@"pol: %@ lat: %f lon: %f", polygon, latitude, longitude);
     NSArray *StringPolygonAsArray = [polygon componentsSeparatedByString:@","];
@@ -184,9 +203,9 @@
     return counter % 2 != 0;
 }
 
-/**
- * @Precondition: "Significant" change in location.
- * @Postcondition: Updates structuresData and lastLocationData as necessary.
+/*!
+ * /pre "Significant" change in location.
+ * /post Updates structuresData and lastLocationData as necessary.
  */
 - (void) checkLocationChange {
    NSLog(@"checkLocationChange");
@@ -209,7 +228,8 @@
                 NSLog(@"is inside current structrue");
                 [self makeLocateRequest:[currentNode objectForKey:@"ID"]
                                latitude:[NSString stringWithFormat:@"%f", latitude]
-                              longitude:[NSString stringWithFormat:@"%f", longitude]];
+                              longitude:[NSString stringWithFormat:@"%f", longitude]
+                              elevation:[NSString stringWithFormat:@"%f", elevation]];
             }
             else {
                 // If the user is not inside the structure, check if inside any structure.
@@ -220,7 +240,8 @@
                     NSLog(@"Inside the structre");
                     [self makeLocateRequest:ID
                                    latitude:[NSString stringWithFormat:@"%f", latitude]
-                                  longitude:[NSString stringWithFormat:@"%f", longitude]];
+                                  longitude:[NSString stringWithFormat:@"%f", longitude]
+                                  elevation:[NSString stringWithFormat:@"%f", elevation]];
                 }
                 else {
                     // If the etag is invalid, call structures
@@ -246,6 +267,7 @@
     return false;
 }
 
+
 #pragma mark - KVO updates
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -267,9 +289,10 @@
     } else {
         CLLocation *location = [change objectForKey:NSKeyValueChangeNewKey];
         //NSLog(@"A::Current Location Lati=%.15f Long=%.15f",location.coordinate.latitude, location.coordinate.longitude);
-        //[self showInformation];
+        [self showInformation];
         latitude = location.coordinate.latitude;
         longitude = location.coordinate.longitude;
+        elevation = location.altitude;
         //[self showCoordinates];
         if ([self hasLocationChanged]) {
             [self checkLocationChange];
@@ -277,12 +300,13 @@
     }
 }
 
-- (void) makeLocateRequest:(NSString*) structureId latitude:(NSString*)lat longitude:(NSString*)lon{
+- (void) makeLocateRequest:(NSString*) structureId latitude:(NSString*)lat longitude:(NSString*)lon elevation:(NSString *)ele{
     NSDictionary *headers = @{@"accept": @"application/json"};
     //NSDictionary *parameters = @{]@"lati": @"37.38642893", @"long": @"-122.10951252"};
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     [parameters setObject:lat forKey:@"lati"];
     [parameters setObject:lon forKey:@"long"];
+    [parameters setObject:ele forKey:@"elev"];
  
     [[UNIRest get:^(UNISimpleRequest *request) {
         NSString *url = [NSString stringWithFormat:@"https://morning-castle-21357.herokuapp.com/v1/locate/%@", structureId];
@@ -346,7 +370,9 @@
             NSString *ID;
             if(![(ID = [self checkInsideStructures])  isEqual: @""]) {
                //NSLog(@"ID is %@", ID);
-                [self makeLocateRequest:ID latitude:[NSString stringWithFormat:@"%f", latitude] longitude:[NSString stringWithFormat:@"%f", longitude]];
+                [self makeLocateRequest:ID latitude:[NSString stringWithFormat:@"%f", latitude]
+                                          longitude:[NSString stringWithFormat:@"%f", longitude]
+                                          elevation:[NSString stringWithFormat:@"%f", elevation]];
             }
             
             //for (NSDictionary *data in structuresData.JSONArray) {
