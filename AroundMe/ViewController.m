@@ -26,7 +26,7 @@
     double prev_lat, prev_long;
 }
 
-/**
+/*!
  * Creates the view with the map panel and information panel
  */
 - (void)viewDidLoad {
@@ -68,7 +68,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-/**
+/*!
  * Creates the map view with Google Maps taking 2/3 of the screen.
  */
 - (void)showMapView {
@@ -99,7 +99,7 @@
     });
 }
 
-/**
+/*!
  * Creates the information panel taking the bottom 1/3 of the screen
  */
 - (void)createInformationView {
@@ -112,7 +112,7 @@
     [self.view addSubview:webView];
 }
 
-/**
+/*!
  * Displays a message of the nodes the user is in. The message is displayed in the webView.
  */
 - (void)showInformation {
@@ -131,7 +131,7 @@
     [webView loadHTMLString:html baseURL:nil];
 }
 
-/**
+/*!
  * Debug function to show the latitude, longitude and elevation of the user.
  */
 - (void)showCoordinates {
@@ -139,29 +139,24 @@
     [webView loadHTMLString:html baseURL:nil];
 }
 
-/**
+/*!
  * Check if the user is inside any of the structures
  */
 - (NSString *)checkInsideStructures {
-   //NSLog(@"Inside checkInsideStructres");
     for (NSDictionary *data in structuresData.JSONArray) {
-        //NSLog (@"data=%@",data);
-       //NSLog (@"polygon=%@",[data objectForKey:@"Polygon"]);
-       //NSLog (@"ID=%@",[data objectForKey:@"ID"]);
         if([self isInsidePolygon:[data objectForKey:@"Polygon"]]) {
-           //NSLog(@"IAMINSIDESOMETHING %@", [data objectForKey:@"Name"]);
             return [data objectForKey:@"ID"];
         }
     }
-   //NSLog(@"Not Inside Structrues");
     return @"";
 }
 
-/**
+/*!
  * Determines if the point is inside the polygon.
+ *
+ * \param[in] polygon The polygon of coordinates, where values in odd indecies are latitudes and even indecies are longitudes.
  */
 - (BOOL)isInsidePolygon:(NSString *)polygon {
-   //NSLog(@"pol: %@ lat: %f lon: %f", polygon, latitude, longitude);
     NSArray *StringPolygonAsArray = [polygon componentsSeparatedByString:@","];
     double doubleArray[[StringPolygonAsArray count]];
     
@@ -178,19 +173,13 @@
         int index = i % (length - 1);
         lat2 = doubleArray[index];
         lon2 = doubleArray[index+1];
-       //NSLog(@"First = %d", longitude >= MIN(lon1, lon2));
         if (longitude >= MIN(lon1, lon2)) {
-           //NSLog(@"Second = %d", longitude <= MAX(lon1, lon2));
-           //NSLog(@"SecondTest: long: %f lon1: %f lon2: %f", longitude, lon1, lon2);
             if (longitude <= MAX(lon1, lon2)) {
-               //NSLog(@"Third = %d", latitude <= MAX(lat1, lat2));
                 if (latitude <= MAX(lat1, lat2)) {
-                   //NSLog(@"Fourth = %d", lon1 != lon2);
                     if (lon1 != lon2) {
                         x_intercept = (longitude - lon1) * (lat2 - lat1) / (lon2 - lon1) + lat1;
                         if (lat1 == lat2 || latitude <= x_intercept) {
                             counter++;
-                           //NSLog(@"counter: %d", counter);
                         }
                     }
                 }
@@ -199,33 +188,32 @@
         lat1 = lat2;
         lon1 = lon2;
     }
-   //NSLog(@"counter: %d", counter);
     return counter % 2 != 0;
 }
 
 /*!
- * /pre "Significant" change in location.
- * /post Updates structuresData and lastLocationData as necessary.
+ * \brief Updates the location and etag if neccessary. If the app has a valid lastKnownData, then test if the user is still inside any node.
+ * If the app has no lastKnownData, then test for if the app has a valid etag. If there is a valid etag, call locate. If not, then call
+ * /v1/structures and refresh all data.
+ *
+ *
+ * \pre "Significant" (0.000001 arcdegrees) change in location.
+ * \post Updates structuresData and lastLocationData as necessary.
  */
-- (void) checkLocationChange {
-   NSLog(@"checkLocationChange");
+- (void)checkLocationChange {
     // Check if last known location data exists
     if ([lastKnownLocationData.JSONArray count] > 0) {
-        NSLog(@"lastKnownData exists");
         // If it exists, then check if the user is still inside the last node.
         NSDictionary *currentNode = [lastKnownLocationData.JSONArray lastObject];
         if ([self isInsidePolygon:[currentNode objectForKey:@"Polgon"]]) {
             // If the user is inside, the no change is needed: return
-            NSLog(@"Is still inside last node");
             return;
         }
         else {
             // If the user is not inside the last node, check if inside the fist node (must be a structure).
-            NSLog(@"Is not inside last node");
             currentNode = [lastKnownLocationData.JSONArray firstObject];
             if ([self isInsidePolygon:[currentNode objectForKey:@"Polgon"]]) {
                 // If the user is still inside the structre, call locate
-                NSLog(@"is inside current structrue");
                 [self makeLocateRequest:[currentNode objectForKey:@"ID"]
                                latitude:[NSString stringWithFormat:@"%f", latitude]
                               longitude:[NSString stringWithFormat:@"%f", longitude]
@@ -233,11 +221,9 @@
             }
             else {
                 // If the user is not inside the structure, check if inside any structure.
-                NSLog(@"is not inside current structrue");
                 NSString *ID = [self checkInsideStructures];
                 if (!([ID  isEqual: @""])) {
                     // If there is a valid etag, call locate
-                    NSLog(@"Inside the structre");
                     [self makeLocateRequest:ID
                                    latitude:[NSString stringWithFormat:@"%f", latitude]
                                   longitude:[NSString stringWithFormat:@"%f", longitude]
@@ -245,7 +231,6 @@
                 }
                 else {
                     // If the etag is invalid, call structures
-                    NSLog(@"check all structures.");
                     [self makeStructuresRequest];
                 }
             }
@@ -253,12 +238,15 @@
     }
     else {
         // No data is found; make a request to refresh everything
-        NSLog(@"No data found.");
         [self makeStructuresRequest];
     }
 }
 
-- (BOOL) hasLocationChanged {
+/*!
+ * Method that checks if the user's location has changed. If the app detects a change of more than 0.000001 arcdegrees,
+ * then set prev_lat and prev_long with the new values and return true.
+ */
+- (BOOL)hasLocationChanged {
     if (fabs(prev_lat - latitude) > 0.000001 || fabs(prev_long - longitude) > 0.000001) {
         prev_lat = latitude;
         prev_long = longitude;
@@ -275,34 +263,42 @@
                         change:(NSDictionary *)change
                        context:(void *)context {
     if (!_firstLocationUpdate) {
-        // If the first location update has not yet been recieved, then jump to that
-        // location.
+        // If the first location update has not yet been recieved, then jump to that location.
         _firstLocationUpdate = YES;
         CLLocation *location = [change objectForKey:NSKeyValueChangeNewKey];
-        //NSLog(@"Current Location Lati=%f Long=%f",location.coordinate.latitude, location.coordinate.longitude);
         
         latitude = location.coordinate.latitude;
         longitude = location.coordinate.longitude;
         
         _mapView.camera = [GMSCameraPosition cameraWithTarget:location.coordinate
                                                          zoom:14];
-    } else {
+    }
+    else {
         CLLocation *location = [change objectForKey:NSKeyValueChangeNewKey];
-        //NSLog(@"A::Current Location Lati=%.15f Long=%.15f",location.coordinate.latitude, location.coordinate.longitude);
         [self showInformation];
         latitude = location.coordinate.latitude;
         longitude = location.coordinate.longitude;
         elevation = location.altitude;
-        //[self showCoordinates];
+        
         if ([self hasLocationChanged]) {
             [self checkLocationChange];
         }
     }
 }
 
-- (void) makeLocateRequest:(NSString*) structureId latitude:(NSString*)lat longitude:(NSString*)lon elevation:(NSString *)ele{
+/*!
+ * Makes an asyncronous request to .../v1/locate and updates lastKnownLocationData.
+ *
+ * \param[in] structureId The id of the structure that the user is in.
+ * \param[in] lat The user's current latitude.
+ * \param[in] lon The user's current longitude.
+ * \param[in] ele The user's current elevation.
+ */
+- (void)makeLocateRequest:(NSString *)structureId
+                 latitude:(NSString *)lat
+                longitude:(NSString *)lon
+                elevation:(NSString *)ele {
     NSDictionary *headers = @{@"accept": @"application/json"};
-    //NSDictionary *parameters = @{]@"lati": @"37.38642893", @"long": @"-122.10951252"};
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     [parameters setObject:lat forKey:@"lati"];
     [parameters setObject:lon forKey:@"long"];
@@ -322,10 +318,6 @@
         
         if (code == 200 && [body.JSONArray count] > 0) {
             lastKnownLocationData = body;
-            
-            //for (NSDictionary *data in lastKnownLocationData.JSONArray) {
-               //NSLog (@"data=%@",data);
-            //}
         }
         else {
             lastKnownLocationData = nil;
@@ -334,6 +326,9 @@
     }];
 }
 
+/*!
+ * Makes an asyncronous request to .../v1/structures and updates the structuresEtag and structuresData.
+ */
 - (void)makeStructuresRequest {
     NSDictionary *headers = @{@"accept": @"application/json"};
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
@@ -356,31 +351,16 @@
         //NSData *rawBody = response.rawBody;
     
         if (code == 200) {
-            if (body.array == nil) {
-               //NSLog(@"Body is nil");
-            }
-            else {
+            if (body.array != nil) {
                 structuresData = body;
                 structuresEtag = [responseHeaders objectForKey:@"ETag"];
-               //NSLog(@"etag = %@", structuresEtag);
-               //NSLog(@"data = %@", structuresData.JSONArray);
             }
-            //latitude = 37.386304;
-            //longitude = -122.109345;
             NSString *ID;
             if(![(ID = [self checkInsideStructures])  isEqual: @""]) {
-               //NSLog(@"ID is %@", ID);
                 [self makeLocateRequest:ID latitude:[NSString stringWithFormat:@"%f", latitude]
                                           longitude:[NSString stringWithFormat:@"%f", longitude]
                                           elevation:[NSString stringWithFormat:@"%f", elevation]];
             }
-            
-            //for (NSDictionary *data in structuresData.JSONArray) {
-            //   //NSLog(@"Data = %@", data);
-            //}
-        }
-        else {
-
         }
     }];
 }
