@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7114A21E1E6CDE05002C06EE /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7114A21D1E6CDE05002C06EE /* background.png */; };
 		712F953E1E59791800A468FD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 712F953D1E59791800A468FD /* main.m */; };
 		712F95411E59791800A468FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 712F95401E59791800A468FD /* AppDelegate.m */; };
 		712F95441E59791800A468FD /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 712F95431E59791800A468FD /* ViewController.m */; };
@@ -47,6 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7114A21D1E6CDE05002C06EE /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		712F95391E59791800A468FD /* AroundMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AroundMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		712F953D1E59791800A468FD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		712F953F1E59791800A468FD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 		712F95481E59791800A468FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		712F954B1E59791800A468FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		712F954D1E59791800A468FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		71B5312B1E6B857500A3512F /* Location.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
 		71FE4F1D1E597B760035487E /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		71FE4F1E1E597B760035487E /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMapsCore.framework; sourceTree = "<group>"; };
 		71FE4F211E597B8F0035487E /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMapsBase.framework; sourceTree = "<group>"; };
@@ -152,6 +155,7 @@
 		712F953B1E59791800A468FD /* AroundMe */ = {
 			isa = PBXGroup;
 			children = (
+				7114A21D1E6CDE05002C06EE /* background.png */,
 				71FE4F231E597BDE0035487E /* GoogleMaps.bundle */,
 				71FE4F211E597B8F0035487E /* GoogleMapsBase.framework */,
 				71FE4F1D1E597B760035487E /* GoogleMaps.framework */,
@@ -160,6 +164,7 @@
 				712F95401E59791800A468FD /* AppDelegate.m */,
 				712F95421E59791800A468FD /* ViewController.h */,
 				712F95431E59791800A468FD /* ViewController.m */,
+				71B5312B1E6B857500A3512F /* Location.gpx */,
 				712F95451E59791800A468FD /* Main.storyboard */,
 				712F95481E59791800A468FD /* Assets.xcassets */,
 				712F954A1E59791800A468FD /* LaunchScreen.storyboard */,
@@ -223,13 +228,13 @@
 				71FE4F511E5981AA0035487E /* UNIHTTPStringResponse.m */,
 				71FE4F521E5981AA0035487E /* UNIJsonNode.h */,
 				71FE4F531E5981AA0035487E /* UNIJsonNode.m */,
-				71FE4F541E5981AA0035487E /* Unirest-Prefix.pch */,
 				71FE4F551E5981AA0035487E /* UNIRest.h */,
 				71FE4F561E5981AA0035487E /* UNIRest.m */,
 				71FE4F571E5981AA0035487E /* UNISimpleRequest.h */,
 				71FE4F581E5981AA0035487E /* UNISimpleRequest.m */,
 				71FE4F591E5981AA0035487E /* UNIUrlConnection.h */,
 				71FE4F5A1E5981AA0035487E /* UNIUrlConnection.m */,
+				71FE4F541E5981AA0035487E /* Unirest-Prefix.pch */,
 			);
 			name = UNIRest;
 			sourceTree = "<group>";
@@ -294,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				712F954C1E59791800A468FD /* LaunchScreen.storyboard in Resources */,
+				7114A21E1E6CDE05002C06EE /* background.png in Resources */,
 				712F95491E59791800A468FD /* Assets.xcassets in Resources */,
 				712F95471E59791800A468FD /* Main.storyboard in Resources */,
 				71FE4F241E597BDE0035487E /* GoogleMaps.bundle in Resources */,
@@ -454,6 +460,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.krishk.arclient.AroundMe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -470,6 +477,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.krishk.arclient.AroundMe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
