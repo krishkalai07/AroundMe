@@ -283,16 +283,16 @@
         longitude = location.coordinate.longitude;
         
         _mapView.camera = [GMSCameraPosition cameraWithTarget:location.coordinate
-                                                         zoom:kGMSMaxZoomLevel];
+                                                         zoom:19];
         
         /*
         GMSCameraPosition *fancy = [GMSCameraPosition cameraWithLatitude:latitude
                                                                longitude:longitude
-                                                                    zoom:20
-                                                                 bearing:90
+                                                                    zoom:19
+                                                                 bearing:0
                                                             viewingAngle:45];
         [_mapView setCamera:fancy];
-         */
+        */
         
     }
     else {
@@ -307,6 +307,8 @@
         if ([self hasLocationChanged]) {
             [self checkLocationChange];
         }
+        [_mapView animateToLocation:CLLocationCoordinate2DMake(latitude, longitude)];
+        
     }
 }
 

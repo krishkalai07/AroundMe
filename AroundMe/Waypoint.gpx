@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<gpx version="1.1" creator="Xcode">
+    <wpt lat="37.385671" lon="-122.109663">
+		<name>0</name>
+		<time>2014-09-24T14:55:00Z</time>
+	</wpt>
+	<wpt lat="37.385626" lon="-122.109603">
+		<name>2</name>
+		<time>2014-09-24T14:55:02Z</time>
+	</wpt>
+	<wpt lat="37.385289" lon="-122.109461">
+		<name>4</name>
+		<time>2014-09-24T14:55:04Z</time>
+	</wpt>
+	<wpt lat="37.384995" lon="-122.109457">
+		<name>6</name>
+		<time>2014-09-24T14:55:06Z</time>
+	</wpt>
+	<wpt lat="37.385010" lon="-122.097284">
+		<name>8</name>
+		<time>2014-09-24T14:55:08Z</time>
+	</wpt>
+	<wpt lat="37.385965" lon="-122.096403">
+		<name>10</name>
+		<time>2014-09-24T14:55:10Z</time>
+	</wpt>
+	<wpt lat="37.386124" lon="-122.096346">
+		<name>12</name>
+		<time>2014-09-24T14:55:12Z</time>
+	</wpt>
+	<wpt lat="37.386301" lon="-122.096172">
+		<name>14</name>
+		<time>2014-09-24T14:55:14Z</time>
+	</wpt>
+	<wpt lat="37.386510" lon="-122.096016">
+		<name>16</name>
+		<time>2014-09-24T14:55:16Z</time>
+	</wpt>
+	<wpt lat="37.390093" lon="-122.095958">
+		<name>18</name>
+		<time>2014-09-24T14:55:18Z</time>
+	</wpt>
+	<wpt lat="37.391508" lon="-122.095770">
+		<name>20</name>
+		<time>2014-09-24T14:55:20Z</time>
+	</wpt>
+	<wpt lat="37.391787" lon="-122.095302">
+		<name>22</name>
+		<time>2014-09-24T14:55:22Z</time>
+	</wpt>
+	<wpt lat="37.391210" lon="-122.094725">
+		<name>24</name>
+		<time>2014-09-24T14:55:24Z</time>
+	</wpt>
+	<wpt lat="37.387804" lon="-122.088280">
+		<name>26</name>
+		<time>2014-09-24T14:55:26Z</time>
+	</wpt>
+	<wpt lat="37.389798" lon="-122.087008">
+		<name>28</name>
+		<time>2014-09-24T14:55:28Z</time>
+	</wpt>
+	<wpt lat="37.390616" lon="-122.086246">
+		<name>30</name>
+		<time>2014-09-24T14:55:30Z</time>
+	</wpt>
+	<wpt lat="37.395611" lon="-122.083135">
+		<name>32</name>
+		<time>2014-09-24T14:55:32Z</time>
+	</wpt>
+	<wpt lat="37.397333" lon="-122.081772">
+		<name>34</name>
+		<time>2014-09-24T14:55:34Z</time>
+	</wpt>
+	<wpt lat="37.400290" lon="-122.080387">
+		<name>36</name>
+		<time>2014-09-24T14:55:36Z</time>
+	</wpt>
+	<wpt lat="37.401739" lon="-122.078692">
+		<name>38</name>
+		<time>2014-09-24T14:55:38Z</time>
+	</wpt>
+	<wpt lat="37.403128" lon="-122.078070">
+		<name>40</name>
+		<time>2014-09-24T14:55:40Z</time>
+	</wpt>
+	<wpt lat="37.403887" lon="-122.078102">
+		<name>42</name>
+		<time>2014-09-24T14:55:42Z</time>
+	</wpt>
+	<wpt lat="37.403899" lon="-122.078706">
+		<name>44</name>
+		<time>2014-09-24T14:55:44Z</time>
+	</wpt>
+	<wpt lat="37.404151" lon="-122.078706">
+		<name>46</name>
+		<time>2014-09-24T14:55:46Z</time>
+	</wpt>
+	<wpt lat="37.404151" lon="-122.078895">
+		<name>48</name>
+		<time>2014-09-24T14:55:48Z</time>
+	</wpt>
+</gpx>

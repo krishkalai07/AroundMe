@@ -64,7 +64,7 @@
       <AdditionalOptions>
       </AdditionalOptions>
       <LocationScenarioReference
-         identifier = "../../AroundMe/Location.gpx"
+         identifier = "../../AroundMe/Waypoint.gpx"
          referenceType = "0">
       </LocationScenarioReference>
    </LaunchAction>
