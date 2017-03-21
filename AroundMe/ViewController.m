@@ -30,6 +30,7 @@
  * Creates the view with the map panel and information panel.
  */
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     latitude = 0.0;
@@ -43,24 +44,7 @@
     [self showInformation];
     
     //Check last location buffer. Since last location buffer is empty, make the call.
-    NSLog(@"initual makeStructuresRequest");
     [self makeStructuresRequest];
-    
-    /*
-    double delayInSeconds = 5.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-       //NSLog(@"Second call...");
-        [self makeStructuresRequest];
-    });
-     
-    
-    [self makeLocateRequest:@"b3b7bffa77ad51fee6d3d3ed62c648f2"
-                   latitude:@"37.38642893"
-                  longitude:@"-122.10951252"];
-    
-    [self showInformation:@"Got some info that you will never see."];
-     */
 }
 
 
@@ -79,7 +63,6 @@
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:-33.868
                                                             longitude:151.2086
                                                                  zoom:5];
-    
     _mapView = [GMSMapView mapWithFrame:CGRectMake(0, 0, screenWidth, screenHeight - screenHeight/3) camera:camera];
     _mapView.settings.compassButton = YES;
     _mapView.settings.myLocationButton = YES;
@@ -115,7 +98,7 @@
 }
 
 /*!
- * Displays a message of the nodes the user is in. The message is displayed in the webView.
+ * Displays a message of the nodes the user is in. The message is displayed in the webView. The default message is "Not inside any known structures."
  */
 - (void)showInformation {
     NSString *message = @"<br>Not inside any known structures.";
@@ -208,7 +191,6 @@
  * \post Updates structuresData and lastLocationData as necessary.
  */
 - (void)checkLocationChange {
-    NSLog(@"checkLocationChange");
     // Check if last known location data exists
     if ([lastKnownLocationData.JSONArray count] > 0) {
         // If it exists, then check if the user is still inside the last node.
@@ -222,7 +204,6 @@
             currentNode = [lastKnownLocationData.JSONArray firstObject];
             if ([self isInsidePolygon:[currentNode objectForKey:@"Polgon"]]) {
                 // If the user is still inside the structre, call locate
-                NSLog(@"1 checkLocationChange makeLocateRequest");
                 [self makeLocateRequest:[currentNode objectForKey:@"ID"]
                                latitude:[NSString stringWithFormat:@"%f", latitude]
                               longitude:[NSString stringWithFormat:@"%f", longitude]
@@ -233,7 +214,6 @@
                 NSString *ID = [self checkInsideStructures];
                 if (!([ID  isEqual: @""])) {
                     // If there is a valid etag, call locate
-                    NSLog(@"2 checkLocationChange makeLocateRequest");
                     [self makeLocateRequest:ID
                                    latitude:[NSString stringWithFormat:@"%f", latitude]
                                   longitude:[NSString stringWithFormat:@"%f", longitude]
@@ -241,7 +221,6 @@
                 }
                 else {
                     // If the etag is invalid, call structures
-                    NSLog(@"1 checkLocaton:makeStructuresRequest");
                     [self makeStructuresRequest];
                 }
             }
@@ -249,7 +228,6 @@
     }
     else {
         // No data is found; make a request to refresh everything
-        NSLog(@"2 checkLocaton:makeStructuresRequest");
         [self makeStructuresRequest];
     }
 }
@@ -308,7 +286,6 @@
             [self checkLocationChange];
         }
         [_mapView animateToLocation:CLLocationCoordinate2DMake(latitude, longitude)];
-        
     }
 }
 
@@ -324,10 +301,7 @@
                  latitude:(NSString *)lat
                 longitude:(NSString *)lon
                 elevation:(NSString *)ele {
-    NSLog(@"makeLocateRequest");
     ele = @"0";
-//    lat = @"37.404177";
-//    lon = @"-122.078966";
     
     NSDictionary *headers = @{@"accept": @"application/json"};
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
@@ -342,19 +316,11 @@
         [request setParameters:parameters];
     }] asJsonAsync:^(UNIHTTPJsonResponse* response, NSError *error) {
         // This is the asyncronous callback block
-        NSLog(@"Recieved repsonce.");
         NSInteger code = response.code;
-        //NSDictionary *responseHeaders = response.headers;
         UNIJsonNode *body = response.body;
-        //NSData *rawBody = response.rawBody;
         
-        if (code == 200 && [body.JSONArray count] > 0) {
-            lastKnownLocationData = body;
-        }
-        else {
-            lastKnownLocationData = nil;
-        }
-        NSLog(@"Calling showInformation");
+        lastKnownLocationData = (code == 200 && [body.JSONArray count]) ? body:nil;
+        
         [self showInformation];
     }];
 }
@@ -363,7 +329,6 @@
  * Makes an asyncronous request to .../v1/structures and updates the structuresEtag and structuresData.
  */
 - (void)makeStructuresRequest {
-    NSLog(@"makeStructureRequest");
     NSDictionary *headers = @{@"accept": @"application/json"};
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     if (structuresEtag == nil) {
@@ -372,7 +337,6 @@
     else {
         [parameters setObject:structuresEtag forKey:@"etag"];
     }
-    
     [[UNIRest get:^(UNISimpleRequest *request) {
         [request setUrl:@"https://morning-castle-21357.herokuapp.com/v1/structures/"];
         [request setHeaders:headers];
@@ -391,7 +355,6 @@
             }
             NSString *ID;
             if(![(ID = [self checkInsideStructures])  isEqual: @""]) {
-                NSLog(@"makeStrucres :: makeLocateRequest");
                 [self makeLocateRequest:ID latitude:[NSString stringWithFormat:@"%f", latitude]
                                           longitude:[NSString stringWithFormat:@"%f", longitude]
                                           elevation:[NSString stringWithFormat:@"%f", elevation]];
@@ -400,3 +363,8 @@
     }];
 }
 @end
+
+/*
+ NSTimeInterval start = [NSDate timeIntervalSinceReferenceDate];
+ NSTimeInterval duration = [NSDate timeIntervalSinceReferenceDate] - start;
+ */
